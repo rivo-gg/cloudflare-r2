@@ -62,3 +62,12 @@ export type ObjectListResponse = {
 	continuationToken?: string;
 	nextContinuationToken?: string;
 };
+
+export type Tag = {
+	Key: string | undefined;
+	Value: string | undefined;
+};
+
+export type TagSet = {
+	TagSet: Tag[];
+};

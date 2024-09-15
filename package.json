@@ -10,15 +10,10 @@
 		"test": "jest --passWithNoTests",
 		"format": "biome format --write",
 		"lint": "biome check",
-        "semantic-release": "semantic-release",
+		"semantic-release": "semantic-release",
 		"test:coverage": "jest --coverage --passWithNoTests"
 	},
-	"keywords": [
-		"cloudflare",
-		"r2",
-		"cloud",
-		"storage"
-	],
+	"keywords": ["cloudflare", "r2", "cloud", "storage"],
 	"files": ["dist", "README.md"],
 	"exports": {
 		".": {
@@ -32,9 +27,9 @@
 			"require": "./dist/types.js"
 		}
 	},
-    "publishConfig": {
-        "access": "public"
-    },
+	"publishConfig": {
+		"access": "public"
+	},
 	"license": "ISC",
 	"author": "Surya Oktafendri <dev@f2face.com>, Rivo-gg",
 	"repository": {

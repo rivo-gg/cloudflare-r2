@@ -3,20 +3,26 @@ import { basename } from "node:path";
 import type { Readable } from "node:stream";
 import {
 	CopyObjectCommand,
+	DeleteBucketTaggingCommand,
 	DeleteObjectCommand,
+	DeleteObjectTaggingCommand,
 	GetBucketCorsCommand,
 	GetBucketEncryptionCommand,
 	GetBucketLocationCommand,
+	GetBucketTaggingCommand,
 	GetObjectCommand,
+	GetObjectTaggingCommand,
 	HeadBucketCommand,
 	HeadObjectCommand,
 	ListObjectsCommand,
+	PutBucketTaggingCommand,
 	PutObjectCommand,
+	PutObjectTaggingCommand,
 	type S3Client as R2,
 } from "@aws-sdk/client-s3";
 import { type Progress, Upload } from "@aws-sdk/lib-storage";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import type { CORSPolicy, HeadObjectResponse, ObjectListResponse, UploadFileResponse } from "./types";
+import type { CORSPolicy, HeadObjectResponse, ObjectListResponse, Tag, UploadFileResponse } from "./types";
 
 export class Bucket {
 	private r2: R2;
@@ -324,7 +330,7 @@ export class Bucket {
 			client: this.r2,
 			params: {
 				Bucket: this.name,
-				Key: destination,
+				Key: normalizedDestination,
 				Body: contents,
 				ContentType: mimeType || "application/octet-stream",
 				Metadata: customMetadata,
@@ -336,10 +342,10 @@ export class Bucket {
 		const result = await upload.done();
 
 		return {
-			objectKey: destination,
-			uri: `${this.uri}/${destination}`,
-			publicUrl: this.generateObjectPublicUrl(destination),
-			publicUrls: this.generateObjectPublicUrls(destination),
+			objectKey: normalizedDestination,
+			uri: `${this.uri}/${normalizedDestination}`,
+			publicUrl: this.generateObjectPublicUrl(normalizedDestination),
+			publicUrls: this.generateObjectPublicUrls(normalizedDestination),
 			etag: result.ETag,
 			versionId: result.VersionId,
 		};
@@ -474,5 +480,99 @@ export class Bucket {
 	 */
 	private normalizeDestination(destination: string): string {
 		return destination.startsWith("/") ? destination.replace(/^\/+/, "") : destination;
+	}
+
+	/**
+	 * Sets tags for the bucket
+	 * @param tags An array of key-value pairs
+	 */
+	public async setBucketTags(tags: Tag[]): Promise<void> {
+		await this.r2.send(
+			new PutBucketTaggingCommand({
+				Bucket: this.name,
+				Tagging: { TagSet: tags },
+			}),
+		);
+	}
+
+	/**
+	 * Retrieves tags for the bucket
+	 * @returns An array of key-value pairs
+	 */
+	public async getBucketTags(): Promise<Tag[]> {
+		try {
+			const result = await this.r2.send(
+				new GetBucketTaggingCommand({
+					Bucket: this.name,
+				}),
+			);
+			return result.TagSet || [];
+		} catch (error) {
+			if ((error as Error).name === "NoSuchTagSet") {
+				return [];
+			}
+			throw error;
+		}
+	}
+
+	/**
+	 * Removes all tags from the bucket
+	 */
+	public async deleteBucketTags(): Promise<void> {
+		await this.r2.send(
+			new DeleteBucketTaggingCommand({
+				Bucket: this.name,
+			}),
+		);
+	}
+
+	/**
+	 * Sets tags for an object
+	 * @param objectKey The key of the object
+	 * @param tags An array of key-value pairs
+	 */
+	public async setObjectTags(objectKey: string, tags: Tag[]): Promise<void> {
+		await this.r2.send(
+			new PutObjectTaggingCommand({
+				Bucket: this.name,
+				Key: objectKey,
+				Tagging: { TagSet: tags },
+			}),
+		);
+	}
+
+	/**
+	 * Retrieves tags for an object
+	 * @param objectKey The key of the object
+	 * @returns An array of key-value pairs
+	 */
+	public async getObjectTags(objectKey: string): Promise<Tag[]> {
+		try {
+			const result = await this.r2.send(
+				new GetObjectTaggingCommand({
+					Bucket: this.name,
+					Key: objectKey,
+				}),
+			);
+			return result.TagSet || [];
+		} catch (error) {
+			if ((error as Error).name === "NoSuchTagSet") {
+				return [];
+			}
+			throw error;
+		}
+	}
+
+	/**
+	 * Removes all tags from an object
+	 * @param objectKey The key of the object
+	 */
+	public async deleteObjectTags(objectKey: string): Promise<void> {
+		await this.r2.send(
+			new DeleteObjectTaggingCommand({
+				Bucket: this.name,
+				Key: objectKey,
+			}),
+		);
 	}
 }
