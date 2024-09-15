@@ -11,8 +11,6 @@
   </p>
 </div>
 
-> ⚠ This library is currently in development and is not yet ready for production use. It is subject to change and may contain bugs or other issues. Please use it at your own risk.
-
 ## Installation
 
 #### npm
