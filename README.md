@@ -1,6 +1,15 @@
-# Cloudflare-R2
+<div align="center">
+  <a href="https://github.com/rivo-gg/cloudflare-r2">
+    <img src=".github/images/banner.png" alt="Cloudflare-r2 banner">
+  </a>
 
-This is a fork of the node-cloudflare-r2 wrapper by @f2face, designed to provide a user-friendly and efficient way to interact with Cloudflare R2 API in Node.js
+  <h3 align="center">Cloudflare-R2</h3>
+
+  <p align="center">
+    This is a fork of the node-cloudflare-r2 wrapper by @f2face, designed to provide a user-friendly and efficient way to interact with Cloudflare R2 API in Node.js
+    <br />
+  </p>
+</div>
 
 > ⚠ This library is currently in development and is not yet ready for production use. It is subject to change and may contain bugs or other issues. Please use it at your own risk.
 
@@ -25,11 +34,11 @@ yarn add @rivo-gg/cloudflare-r2
 ```
 
 > It is highly recommended that you use a specific version number in your installation to anticipate any breaking changes that may occur in future releases. For example: \
-> `npm install @rivo-gg/cloudflare-r2@0.0.1` \
+> `npm install @rivo-gg/cloudflare-r2@1.0.` \
 > or \
-> `pnpm add @rivo-gg/cloudflare-r2@0.0.1` \
+> `pnpm add @rivo-gg/cloudflare-r2@1.0.0` \
 > or \
-> `yarn add @rivo-gg/cloudflare-r2@0.0.1` \
+> `yarn add @rivo-gg/cloudflare-r2@1.0.0` \
 > \
 > Check the latest version number in the [release page](https://github.com/rivo-gg/cloudflare-r2/releases).
 
